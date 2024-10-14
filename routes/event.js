@@ -9,5 +9,7 @@ const eventCntrl = require("../controllers/event")
 
 //routes
 router.post("/add", eventCntrl.event_create_post)
+router.get("/index", eventCntrl.event_index_get)
+router.delete("/delete/:id", eventCntrl.event_delete_delete)
 
 module.exports = router
