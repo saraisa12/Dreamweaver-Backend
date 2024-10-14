@@ -22,6 +22,7 @@ const eventSchema = mongoose.Schema(
     },
     availableTickets: {
       type: Number,
+      default: 0,
     },
   },
   {
@@ -31,4 +32,4 @@ const eventSchema = mongoose.Schema(
 
 const Event = mongoose.model("Event", eventSchema)
 
-module.exports = { Event }
+module.exports = Event
