@@ -22,10 +22,14 @@ app.use(express.urlencoded({ extended: true })) // for parsing application/x-www
 // Import routes
 const eventRouter = require('./routes/event')
 const authRouter = require('./routes/AuthRouter') // Import your AuthRouter
+const reservationsRouter = require("./routes/reservations")
 
-// Mount routes
-app.use('/event', eventRouter)
+//mount routes
+
+app.use("/event", eventRouter)
+app.use("/reservations", reservationsRouter)
 app.use('/auth', authRouter) // Mount the AuthRouter for authentication
+
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`)
