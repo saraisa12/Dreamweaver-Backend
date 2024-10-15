@@ -24,6 +24,19 @@ exports.event_index_get = async (req, res) => {
   }
 }
 
+exports.event_details_get = async (req, res) => {
+  try {
+    const id = req.params.id
+    const event = await Event.findById(id)
+
+    console.log(event)
+    res.status(200).json(event)
+  } catch (error) {
+    console.error("Error retrieving event:", error)
+    res.status(500).json({ error: error.message })
+  }
+}
+
 exports.event_delete_delete = async (req, res) => {
   try {
     const id = req.params.id
