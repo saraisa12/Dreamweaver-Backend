@@ -22,10 +22,12 @@ app.use(express.urlencoded({ extended: true })) // for parsing application/x-www
 //import routes
 
 const eventRouter = require("./routes/event")
+const reservationsRouter = require("./routes/reservations")
 
 //mount routes
 
 app.use("/event", eventRouter)
+app.use("/reservations", reservationsRouter)
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`)
