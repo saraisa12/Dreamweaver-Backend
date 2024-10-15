@@ -2,14 +2,32 @@ const Event = require("../models/Event")
 
 exports.event_create_post = async (req, res) => {
   try {
-    const event = new Event(req.body)
-    console.log("Request Body:", req.body)
+    console.log("Uploaded file:", req.file)
 
+    const { name, date, time, details, availableTickets } = req.body
+    const image = req.file ? req.file.path : null
+
+    console.log("Image path to be saved:", image)
+
+    // Create a new event with the provided data
+    const event = new Event({
+      name,
+      date,
+      time,
+      details,
+      availableTickets,
+      image, // Save the image path in the database
+    })
+
+    // Save the event to the database
     await event.save()
-    res.status(201).json(event)
+
+    res.status(201).json({ message: "Event created successfully", event })
   } catch (error) {
     console.error("Error creating event:", error)
-    res.status(400).json({ error: error.message })
+    res
+      .status(500)
+      .json({ message: "Error creating event", error: error.message })
   }
 }
 
