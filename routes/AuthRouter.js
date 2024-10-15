@@ -1,7 +1,8 @@
 const router = require('express').Router()
 const controller = require('../controllers/AuthController')
-const middleware = require('../middleware')
+const middleware = require('../middleware') // Ensure this points to the index.js or the correct middleware file
 
+// Define routes
 router.post('/login', controller.Login)
 router.post('/register', controller.Register)
 router.put(
