@@ -1,15 +1,15 @@
-const mongoose = require("mongoose")
-const express = require("express")
-const cors = require("cors")
+const mongoose = require('mongoose')
+const express = require('express')
+const cors = require('cors')
 
 // Load environment variables from .env file
-require("dotenv").config()
+require('dotenv').config()
 
 //Load DB
-require("./config/db")
+require('./config/db')
 
 // PORT Configurations
-const PORT = process.env.PORT
+const PORT = process.env.PORT || 4000
 
 const app = express()
 
@@ -21,11 +21,11 @@ app.use(express.urlencoded({ extended: true })) // for parsing application/x-www
 
 //import routes
 
-const eventRouter = require("./routes/event")
+const eventRouter = require('./routes/event')
 
 //mount routes
 
-app.use("/event", eventRouter)
+app.use('/event', eventRouter)
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`)
