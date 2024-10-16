@@ -1,5 +1,5 @@
-const User = require('../models/User') // Correctly import the User model
-const middleware = require('../middleware') // This should point to the index.js in middleware
+const User = require('../models/User')
+const middleware = require('../middleware')
 
 // Register a new user
 const Register = async (req, res) => {
@@ -15,11 +15,16 @@ const Register = async (req, res) => {
         .send('A user with that email has already been registered!')
     }
 
-    // Create new user
-    const user = await User.create({ name, email, passwordDigest })
+    // Create new user with default role
+    const user = await User.create({
+      name,
+      email,
+      passwordDigest,
+      role: 'user'
+    })
     res.status(201).send(user) // Respond with created status
   } catch (error) {
-    console.error('Registration error:', error) // Log the error for debugging
+    console.error('Registration error:', error)
     res.status(500).send({ status: 'Error', msg: 'Server error occurred!' })
   }
 }
@@ -43,7 +48,8 @@ const Login = async (req, res) => {
     if (matched) {
       let payload = {
         id: user.id,
-        email: user.email
+        email: user.email,
+        role: user.role // Include the role in the payload
       }
       let token = middleware.createToken(payload)
       return res.send({ user: payload, token })
@@ -51,7 +57,7 @@ const Login = async (req, res) => {
 
     res.status(401).send({ status: 'Error', msg: 'Unauthorized' })
   } catch (error) {
-    console.log('Login error:', error) // Log the error for debugging
+    console.log('Login error:', error)
     res.status(500).send({ status: 'Error', msg: 'Server error!' })
   }
 }
@@ -82,7 +88,8 @@ const UpdatePassword = async (req, res) => {
 
       let payload = {
         id: user.id,
-        email: user.email
+        email: user.email,
+        role: user.role // Include role in payload
       }
       return res.send({ status: 'Password Updated!', user: payload })
     }
@@ -91,7 +98,7 @@ const UpdatePassword = async (req, res) => {
       .status(401)
       .send({ status: 'Error', msg: 'Old Password did not match!' })
   } catch (error) {
-    console.log('Update password error:', error) // Log the error for debugging
+    console.log('Update password error:', error)
     res
       .status(500)
       .send({

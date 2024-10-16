@@ -1,68 +1,95 @@
-const Event = require("../models/Event")
+const Event = require('../models/Event')
+const multer = require('multer')
+const path = require('path')
 
-exports.event_create_post = async (req, res) => {
+// Set up multer storage
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, './public/uploads/') // Ensure this directory exists
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname)) // Unique filename
+  }
+})
+
+// Initialize multer
+upload = multer({ storage: storage })
+
+// Get all events
+const event_index_get = async (req, res) => {
   try {
-    console.log("Uploaded file:", req.file)
+    const events = await Event.find()
+    console.log('Retrieved Events:', events)
+    res.status(200).json(events)
+  } catch (error) {
+    console.error('Error retrieving events:', error)
+    res.status(500).json({ error: error.message })
+  }
+}
 
+// Create a new event
+const event_create_post = async (req, res) => {
+  try {
     const { name, date, time, details, availableTickets } = req.body
-    const image = req.file ? req.file.path : null
+    const image = req.file ? req.file.filename : null // Get the filename if an image is uploaded
 
-    console.log("Image path to be saved:", image)
-
-    // Create a new event with the provided data
     const event = new Event({
       name,
       date,
       time,
       details,
       availableTickets,
-      image, // Save the image path in the database
+      image
     })
 
-    // Save the event to the database
+    console.log('Request Body:', req.body)
     await event.save()
-
-    res.status(201).json({ message: "Event created successfully", event })
+    res.status(201).json(event)
   } catch (error) {
-    console.error("Error creating event:", error)
-    res
-      .status(500)
-      .json({ message: "Error creating event", error: error.message })
+    console.error('Error creating event:', error)
+    res.status(400).json({ error: error.message })
   }
 }
 
-exports.event_index_get = async (req, res) => {
-  try {
-    const events = await Event.find()
-    console.log("retrived Events :", events)
-    res.status(200).json(events)
-  } catch (error) {
-    console.error("Error retrieving events:", error)
-    res.status(500).json({ error: error.message })
-  }
-}
-
-exports.event_details_get = async (req, res) => {
+// Get event details by ID
+const event_details_get = async (req, res) => {
   try {
     const id = req.params.id
     const event = await Event.findById(id)
 
-    console.log(event)
+    if (!event) {
+      return res.status(404).json({ error: 'Event not found' })
+    }
+
+    console.log('Event Details:', event)
     res.status(200).json(event)
   } catch (error) {
-    console.error("Error retrieving event:", error)
+    console.error('Error retrieving event:', error)
     res.status(500).json({ error: error.message })
   }
 }
 
-exports.event_delete_delete = async (req, res) => {
+// Delete an event by ID
+const event_delete_delete = async (req, res) => {
   try {
     const id = req.params.id
-    const event = await Event.findByIdAndDelete(id)
+    const deletedEvent = await Event.findByIdAndDelete(id)
 
-    res.status(200).json({ message: "Event deleted successfully" })
+    if (!deletedEvent) {
+      return res.status(404).json({ error: 'Event not found' })
+    }
+
+    res.status(200).json({ message: 'Event deleted successfully' })
   } catch (error) {
-    console.error("Error deleting event:", error)
+    console.error('Error deleting event:', error)
     res.status(500).json({ error: error.message })
   }
+}
+
+module.exports = {
+  event_index_get,
+  event_create_post,
+  event_details_get,
+  event_delete_delete,
+  upload
 }
